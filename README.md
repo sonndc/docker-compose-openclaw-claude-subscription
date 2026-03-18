@@ -1,24 +1,25 @@
 # OpenClaw + Claude Max (Docker Compose)
 
-Run **OpenClaw** AI Agent connected to **Telegram**, powered by **Claude Max subscription** instead of pay-per-token API keys.
+Run **OpenClaw** AI Agent connected to **Telegram**, powered by **Claude Max subscription** instead of pay-per-token API
+keys.
 
 ## Architecture
 
 ```
 ┌──────────┐    ┌─── Docker Compose ──────────────────────────────────────┐
 │ Telegram │───▶│                                                         │
-│ (User)   │◀───│  ┌──────────┐   ┌──────────────────┐   ┌────────────┐  │
-└──────────┘    │  │ OpenClaw │──▶│ Claude Proxy (Go)│──▶│ Claude CLI │  │
-                │  │ :18789   │   │ :8080            │   │ (claude -p)│  │
-┌──────────┐    │  │ AI Agent │   │ OpenAI-compatible│   │ OAuth Max  │  │
-│ Dashboard│───▶│  │ Telegram │   │ FlexContent patch│   └─────┬──────┘  │
-│ (Browser)│    │  └──────────┘   └──────────────────┘         │         │
-└──────────┘    │                                              │         │
-                │                                    ┌─────────▼───────┐ │
-                │                                    │ Anthropic API   │ │
-                │                                    │ (quota Claude   │ │
-                │                                    │  Max, no API$)  │ │
-                │                                    └─────────────────┘ │
+│ (User)   │◀───│  ┌──────────┐   ┌──────────────────┐   ┌────────────┐   │
+└──────────┘    │  │ OpenClaw │──▶│ Claude Proxy (Go)│──▶│ Claude CLI │   │
+                │  │ :18789   │   │ :8080            │   │ (claude -p)│   │
+┌──────────┐    │  │ AI Agent │   │ OpenAI-compatible│   │ OAuth Max  │   │
+│ Dashboard│───▶│  │ Telegram │   │ FlexContent patch│   └─────┬──────┘   │
+│ (Browser)│    │  └──────────┘   └──────────────────┘         │          │
+└──────────┘    │                                              │          │
+                │                                    ┌─────────▼───────┐  │
+                │                                    │ Anthropic API   │  │
+                │                                    │ (quota Claude   │  │
+                │                                    │  Max, no API$)  │  │
+                │                                    └─────────────────┘  │
                 └─────────────────────────────────────────────────────────┘
                                       │
                                mount: ~/.claude/
@@ -43,7 +44,8 @@ Run **OpenClaw** AI Agent connected to **Telegram**, powered by **Claude Max sub
 
 ## Step 1: Install Claude Code CLI + Log in to Claude Max
 
-The Docker container mounts `~/.claude/` from the host machine to use the OAuth token. You need to install and log in to the CLI on the host first.
+The Docker container mounts `~/.claude/` from the host machine to use the OAuth token. You need to install and log in to
+the CLI on the host first.
 
 ### 1.1 Install Claude Code CLI
 
@@ -116,9 +118,11 @@ If you see a response — the CLI is successfully using your Max quota.
 ls ~/.claude/
 ```
 
-You should see files like `.credentials.json`, `settings.json`, etc. This is the directory Docker will mount (read-only) into the proxy container.
+You should see files like `.credentials.json`, `settings.json`, etc. This is the directory Docker will mount (read-only)
+into the proxy container.
 
-> **Security**: The `~/.claude/` directory contains your OAuth token. Do not share it. The token auto-refreshes and does not require re-login unless revoked.
+> **Security**: The `~/.claude/` directory contains your OAuth token. Do not share it. The token auto-refreshes and does
+> not require re-login unless revoked.
 
 ---
 
@@ -148,14 +152,15 @@ You should see files like `.credentials.json`, `settings.json`, etc. This is the
 
 Send these commands to @BotFather:
 
-| Command | Description |
-|---------|-------------|
-| `/setdescription` | Bot description shown when a user opens the chat for the first time |
-| `/setabouttext` | About text shown in the bot's profile |
-| `/setuserpic` | Bot profile picture |
-| `/setprivacy` → `Disable` | Allow bot to read group messages (without @mention) |
+| Command                   | Description                                                         |
+|---------------------------|---------------------------------------------------------------------|
+| `/setdescription`         | Bot description shown when a user opens the chat for the first time |
+| `/setabouttext`           | About text shown in the bot's profile                               |
+| `/setuserpic`             | Bot profile picture                                                 |
+| `/setprivacy` → `Disable` | Allow bot to read group messages (without @mention)                 |
 
-> **Security**: The bot token grants full control over the bot. Never share it. If compromised, send `/revoke` to @BotFather to generate a new one.
+> **Security**: The bot token grants full control over the bot. Never share it. If compromised, send `/revoke` to
+> @BotFather to generate a new one.
 
 ---
 
@@ -262,12 +267,12 @@ Send a message to the bot on Telegram — it should reply using Claude AI.
 
 Available models:
 
-| Model ID | Name | Note |
-|---|---|---|
-| `claude-sonnet-4-20250514` | Claude Sonnet 4 | |
-| `claude-sonnet-4-6-20250620` | Claude Sonnet 4.6 | **Default** |
-| `claude-opus-4-6-20250620` | Claude Opus 4.6 | Most capable |
-| `claude-haiku-4-5-20251001` | Claude Haiku 4.5 | Fastest |
+| Model ID                     | Name              | Note         |
+|------------------------------|-------------------|--------------|
+| `claude-sonnet-4-20250514`   | Claude Sonnet 4   |              |
+| `claude-sonnet-4-6-20250620` | Claude Sonnet 4.6 | **Default**  |
+| `claude-opus-4-6-20250620`   | Claude Opus 4.6   | Most capable |
+| `claude-haiku-4-5-20251001`  | Claude Haiku 4.5  | Fastest      |
 
 ### Change model on a running container:
 
@@ -405,19 +410,19 @@ grep DASHBOARD_TOKEN docker/.env
 
 ## Telegram DM policies
 
-| Policy | Description | When to use |
-|--------|-------------|-------------|
-| `pairing` | User messages → receives code → admin approves | **Default, most secure** |
-| `allowlist` | Only user IDs in the list can message | When you know who will use it |
-| `open` | Anyone can message | Demo/testing only |
+| Policy      | Description                                    | When to use                   |
+|-------------|------------------------------------------------|-------------------------------|
+| `pairing`   | User messages → receives code → admin approves | **Default, most secure**      |
+| `allowlist` | Only user IDs in the list can message          | When you know who will use it |
+| `open`      | Anyone can message                             | Demo/testing only             |
 
 Change policy in config (`docker/config/openclaw.json` or live config):
 
 ```json
 "channels": {
-  "telegram": {
-    "dmPolicy": "pairing"
-  }
+    "telegram": {
+        "dmPolicy": "pairing"
+    }
 }
 ```
 
@@ -427,7 +432,9 @@ Change policy in config (`docker/config/openclaw.json` or live config):
 
 ## Technical notes
 
-- **Go proxy** (`meaning-systems/claude-code-proxy`) is patched to support both content formats: string (`"content": "text"`) and array (`"content": [{"type":"text","text":"..."}]`)
+- **Go proxy** (`meaning-systems/claude-code-proxy`) is patched to support both content formats: string (
+  `"content": "text"`) and array (`"content": [{"type":"text","text":"..."}]`)
 - **OpenClaw container** runs as user `node`, config at `/home/node/.openclaw/`
 - **Claude OAuth token** is mounted read-only from the host (`~/.claude:/root/.claude:ro`)
-- **Concurrent requests**: Claude Max has rate limits based on subscription tier. The proxy processes requests serially (one at a time)
+- **Concurrent requests**: Claude Max has rate limits based on subscription tier. The proxy processes requests
+  serially (one at a time)
