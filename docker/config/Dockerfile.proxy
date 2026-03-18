@@ -1,0 +1,21 @@
+FROM golang:1.26 AS builder
+
+RUN git clone https://github.com/meaning-systems/claude-code-proxy.git /build
+WORKDIR /build
+
+# Patch: handle OpenClaw's array content format
+COPY patch-proxy.sh /tmp/patch-proxy.sh
+RUN bash /tmp/patch-proxy.sh
+RUN go build -o /claude-code-proxy .
+
+FROM node:22
+
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates && \
+    curl -fsSL https://claude.ai/install.sh | bash && \
+    rm -rf /var/lib/apt/lists/*
+ENV PATH="/root/.local/bin:${PATH}"
+
+COPY --from=builder /claude-code-proxy /usr/local/bin/claude-code-proxy
+
+EXPOSE 8080
+CMD ["claude-code-proxy"]

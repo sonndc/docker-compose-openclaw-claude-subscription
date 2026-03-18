@@ -1,0 +1,13 @@
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Docker runtime data & secrets
+docker/.env
+docker/data/
+
+# OS
+.DS_Store
+Thumbs.db

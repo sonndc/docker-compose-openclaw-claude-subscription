@@ -1,0 +1,71 @@
+{
+  "providers": {
+    "claude-max": {
+      "baseUrl": "http://claude-proxy:8080/v1",
+      "apiKey": "not-needed",
+      "api": "openai-completions",
+      "models": [
+        {
+          "id": "claude-sonnet-4-20250514",
+          "name": "Claude Sonnet 4 (Max)",
+          "contextWindow": 200000,
+          "maxTokens": 16384,
+          "reasoning": false,
+          "input": ["text"],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "api": "openai-completions"
+        },
+        {
+          "id": "claude-sonnet-4-6-20250620",
+          "name": "Claude Sonnet 4.6 (Max)",
+          "contextWindow": 200000,
+          "maxTokens": 16384,
+          "reasoning": false,
+          "input": ["text"],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "api": "openai-completions"
+        },
+        {
+          "id": "claude-opus-4-6-20250620",
+          "name": "Claude Opus 4.6 (Max)",
+          "contextWindow": 200000,
+          "maxTokens": 16384,
+          "reasoning": false,
+          "input": ["text"],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "api": "openai-completions"
+        },
+        {
+          "id": "claude-haiku-4-5-20251001",
+          "name": "Claude Haiku 4.5 (Max)",
+          "contextWindow": 200000,
+          "maxTokens": 16384,
+          "reasoning": false,
+          "input": ["text"],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "api": "openai-completions"
+        }
+      ]
+    }
+  }
+}

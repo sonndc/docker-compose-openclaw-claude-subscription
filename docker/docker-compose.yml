@@ -1,0 +1,65 @@
+###############################################################
+# OpenClaw + Claude Max Proxy - Docker Compose
+#
+# Usage:
+#   cd docker/
+#   cp .env.example .env   # edit secrets
+#   docker compose up -d
+#
+# Dashboard: http://localhost:${GATEWAY_PORT}?token=${DASHBOARD_TOKEN}
+###############################################################
+
+services:
+  # ─────────────────────────────────────────────────
+  # Claude Max API Proxy
+  # Bridges OpenAI-compatible API <-> Claude Code CLI
+  # ─────────────────────────────────────────────────
+  claude-proxy:
+    build:
+      context: ./config
+      dockerfile: Dockerfile.proxy
+    container_name: openclaw-claude-proxy
+    restart: unless-stopped
+    ports:
+      - "${PROXY_PORT:-8080}:8080"
+    volumes:
+      # Mount Claude OAuth tokens from host
+      - ${CLAUDE_CONFIG_HOST:-~/.claude}:/root/.claude:ro
+    environment:
+      - PROXY_API_KEY=not-needed
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+    networks:
+      - openclaw-net
+
+  # ─────────────────────────────────────────────────
+  # OpenClaw Gateway
+  # AI Agent + Telegram + Dashboard
+  # ─────────────────────────────────────────────────
+  openclaw:
+    image: ghcr.io/openclaw/openclaw:latest
+    container_name: openclaw-gateway
+    restart: unless-stopped
+    depends_on:
+      claude-proxy:
+        condition: service_healthy
+    ports:
+      - "${GATEWAY_PORT:-18789}:${GATEWAY_PORT:-18789}"
+    volumes:
+      # Container runs as user "node", config at /home/node/.openclaw/
+      # Mount entire .openclaw dir for persistence + easy config editing
+      - ${OPENCLAW_DATA:-./data}/openclaw:/home/node/.openclaw
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - OPENAI_API_KEY=${PROXY_API_KEY:-not-needed}
+      - OPENAI_BASE_URL=http://claude-proxy:8080/v1
+    networks:
+      - openclaw-net
+
+networks:
+  openclaw-net:
+    driver: bridge
