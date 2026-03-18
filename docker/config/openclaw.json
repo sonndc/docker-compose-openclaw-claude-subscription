@@ -75,7 +75,7 @@
           "streaming": false
         }
       },
-      "workspace": "/root/.openclaw/workspace"
+      "workspace": "/home/node/shared"
     }
   },
   "tools": {

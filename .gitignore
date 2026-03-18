@@ -7,6 +7,8 @@
 # Docker runtime data & secrets
 docker/.env
 docker/data/
+docker/shared/*
+!docker/shared/.gitkeep
 
 # OS
 .DS_Store

@@ -52,6 +52,8 @@ services:
       # Container runs as user "node", config at /home/node/.openclaw/
       # Mount entire .openclaw dir for persistence + easy config editing
       - ${OPENCLAW_DATA:-./data}/openclaw:/home/node/.openclaw
+      # Shared workspace between host and container
+      - ${SHARED_DIR:-./shared}:/home/node/shared
       # Entrypoint script to sync env vars into OpenClaw config
       - ./config/openclaw-entrypoint.sh:/usr/local/bin/openclaw-entrypoint.sh:ro
     entrypoint: ["/usr/local/bin/openclaw-entrypoint.sh"]
