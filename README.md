@@ -191,6 +191,9 @@ CLAUDE_CONFIG_HOST=~/.claude
 
 # OpenClaw data directory
 OPENCLAW_DATA=./data
+
+# Shared directory between host and ClawBot container
+SHARED_DIR=./shared
 ```
 
 ### Generate a random dashboard token:
@@ -269,7 +272,6 @@ Available models:
 
 | Model ID                     | Name              | Note         |
 |------------------------------|-------------------|--------------|
-| `claude-sonnet-4-20250514`   | Claude Sonnet 4   |              |
 | `claude-sonnet-4-6-20250620` | Claude Sonnet 4.6 | **Default**  |
 | `claude-opus-4-6-20250620`   | Claude Opus 4.6   | Most capable |
 | `claude-haiku-4-5-20251001`  | Claude Haiku 4.5  | Fastest      |
@@ -305,12 +307,27 @@ Replace with your desired model, e.g.:
 
 ---
 
+## Shared directory
+
+The `docker/shared/` folder is mounted into the container at `/home/node/shared/`. Files are accessible both ways:
+
+- **Host → ClawBot**: Drop files into `docker/shared/`, ClawBot can read/process them
+- **ClawBot → Host**: ClawBot writes output to `/home/node/shared/`, accessible on host at `docker/shared/`
+
+Configure the path in `.env`:
+
+```env
+SHARED_DIR=./shared
+```
+
+---
+
 ## Dashboard
 
 Access the OpenClaw dashboard:
 
 ```
-http://localhost:18789?token=<DASHBOARD_TOKEN>
+http://localhost:18789/#token=<DASHBOARD_TOKEN>
 ```
 
 `DASHBOARD_TOKEN` is the value from your `.env` file.
@@ -333,6 +350,7 @@ openclaw/
 │   │   ├── openclaw.json        # OpenClaw config template
 │   │   ├── models.json          # Model definitions template
 │   │   └── auth-profiles.json   # Auth profiles template
+│   ├── shared/                  # Shared files between host & ClawBot
 │   └── data/                    # Runtime data (not committed)
 │       └── openclaw/            # OpenClaw config + data (volume mount)
 └── .gitignore
