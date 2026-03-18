@@ -47,18 +47,20 @@ services:
     depends_on:
       claude-proxy:
         condition: service_healthy
-    ports:
-      - "${GATEWAY_PORT:-18789}:${GATEWAY_PORT:-18789}"
+    network_mode: host
     volumes:
       # Container runs as user "node", config at /home/node/.openclaw/
       # Mount entire .openclaw dir for persistence + easy config editing
       - ${OPENCLAW_DATA:-./data}/openclaw:/home/node/.openclaw
+      # Entrypoint script to sync env vars into OpenClaw config
+      - ./config/openclaw-entrypoint.sh:/usr/local/bin/openclaw-entrypoint.sh:ro
+    entrypoint: ["/usr/local/bin/openclaw-entrypoint.sh"]
+    command: ["docker-entrypoint.sh", "node", "openclaw.mjs", "gateway", "--allow-unconfigured"]
     environment:
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - DASHBOARD_TOKEN=${DASHBOARD_TOKEN}
       - OPENAI_API_KEY=${PROXY_API_KEY:-not-needed}
-      - OPENAI_BASE_URL=http://claude-proxy:8080/v1
-    networks:
-      - openclaw-net
+      - OPENAI_BASE_URL=http://localhost:${PROXY_PORT:-8080}/v1
 
 networks:
   openclaw-net:
